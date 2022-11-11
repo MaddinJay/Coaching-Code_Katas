@@ -25,10 +25,15 @@ CLASS ycl_mars_rover DEFINITION
     METHODS get_direction           RETURNING VALUE(rv_direction) TYPE ty_direction.
     METHODS get_commands            RETURNING VALUE(rt_commands) TYPE ycl_mars_rover=>tt_commands.
 
+    METHODS move_forward_backward.
+
   PRIVATE SECTION.
     DATA ms_position    TYPE ts_position.
     DATA mv_direction   TYPE ty_direction.
     DATA mt_commands    TYPE ycl_mars_rover=>tt_commands.
+
+    METHODS move_forward  RETURNING VALUE(rv_position) TYPE i.
+    METHODS move_backward RETURNING VALUE(rv_position) TYPE i.
 
 ENDCLASS.
 
@@ -56,6 +61,24 @@ CLASS ycl_mars_rover IMPLEMENTATION.
 
   METHOD get_commands.
     rt_commands = mt_commands.
+  ENDMETHOD.
+
+  METHOD move_forward_backward.
+    ms_position-x = SWITCH #( mv_direction
+                              WHEN mc_direction-north THEN move_forward( )
+                              WHEN mc_direction-south THEN move_backward( ) ).
+  ENDMETHOD.
+
+  METHOD move_backward.
+    rv_position = SWITCH #( ms_position-x
+                            WHEN 1 THEN 4               " Grid 4x4 -> If 1 reached, go forward to 4
+                            ELSE ms_position-x - 1 ).
+  ENDMETHOD.
+
+  METHOD move_forward.
+    rv_position = SWITCH #( ms_position-x
+                            WHEN 4 THEN 1               " Grid 4x4 -> If 4 reached, go back to 1
+                            ELSE ms_position-x + 1 ).
   ENDMETHOD.
 
 ENDCLASS.
