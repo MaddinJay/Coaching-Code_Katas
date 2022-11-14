@@ -7,20 +7,20 @@ CLASS ltcl_mars_rover DEFINITION FINAL FOR TESTING
 
     METHODS:
       setup,
-      " WHEN given starting point THEN starting point is set in object
-      test_setting_starting_point FOR TESTING,
-      " WHEN receiving direction THEN direction is set in object
-      test_receive_direction      FOR TESTING,
-      " WHEN receiving commands  THEN commands are set in object
-      test_receive_commands FOR TESTING,
-
-      test_move_forward FOR TESTING RAISING cx_static_check,
-
-      test_move_backward FOR TESTING RAISING cx_static_check,
+      " WHEN move forward/backward THEN position X moved 1 up/down
+      test_move_forward                 FOR TESTING,
+      test_move_backward                FOR TESTING,
       " WHEN move forward (north) and boundary reached THEN set x postition to 1
-      test_move_forw_boundary_reach FOR TESTING RAISING cx_static_check,
-
-      test_move_backw_boundary_reach FOR TESTING RAISING cx_static_check.
+      test_move_forw_boundary_reach     FOR TESTING,
+      " WHEN move forward (south) and boundary reached THEN set x postition to 4
+      test_move_backw_boundary_reach    FOR TESTING,
+      " WHEN move left/right THEN position Y moved 1 down/up
+      test_move_left                    FOR TESTING,
+      test_move_right                   FOR TESTING,
+      " WHEN move left (west) and boundary reached THEN set y postition to 4
+      test_move_left_bound_reach        FOR TESTING,
+      " WHEN move right (east) and boundary reached THEN set y postition to 1
+      test_move_right_bound_reach       FOR TESTING.
 
 ENDCLASS.
 
@@ -31,31 +31,11 @@ CLASS ltcl_mars_rover IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD test_setting_starting_point.
-    " Set the starting position
-    mo_cut->set_starting_position( VALUE ycl_mars_rover=>ts_position( x = 1 y = -1 ) ).
 
-    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 1 y = -1 )
-                                        act = mo_cut->get_position( ) ).
-  ENDMETHOD.
 
-  METHOD test_receive_direction.
-    " Receive the direction
-    mo_cut->set_direction( ycl_mars_rover=>mc_direction-north ).
 
-    cl_abap_unit_assert=>assert_equals( exp = ycl_mars_rover=>mc_direction-north
-                                        act = mo_cut->get_direction( ) ).
-  ENDMETHOD.
 
-  METHOD test_receive_commands.
-    " Receive the commands array
-    mo_cut->set_commands( VALUE ycl_mars_rover=>tt_commands( ( |1| )
-                                                             ( |-1| ) ) ).
 
-    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>tt_commands( ( |1| )
-                                                                                 ( |-1| ) )
-                                        act = mo_cut->get_commands( ) ).
-  ENDMETHOD.
 
   METHOD test_move_forward.
     " Set the starting position
@@ -63,7 +43,7 @@ CLASS ltcl_mars_rover IMPLEMENTATION.
     mo_cut->set_direction( ycl_mars_rover=>mc_direction-north ).
 
     " Move Mars rover forward (direction north)
-    mo_cut->move_forward_backward( ).
+    mo_cut->move( ).
 
     cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 2 y = -1 )
                                         act = mo_cut->get_position( ) ).
@@ -71,13 +51,13 @@ CLASS ltcl_mars_rover IMPLEMENTATION.
 
   METHOD test_move_backward.
     " Set the starting position
-    mo_cut->set_starting_position( VALUE ycl_mars_rover=>ts_position( x = 2 y = -1 ) ).
+    mo_cut->set_starting_position( VALUE ycl_mars_rover=>ts_position( x = 2 y = 1 ) ).
     mo_cut->set_direction( ycl_mars_rover=>mc_direction-south ).
 
     " Move Mars rover forward (direction south)
-    mo_cut->move_forward_backward( ).
+    mo_cut->move( ).
 
-    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 1 y = -1 )
+    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 1 y = 1 )
                                         act = mo_cut->get_position( ) ).
   ENDMETHOD.
 
@@ -87,7 +67,7 @@ CLASS ltcl_mars_rover IMPLEMENTATION.
     mo_cut->set_direction( ycl_mars_rover=>mc_direction-north ).
 
     " Move Mars rover forward (direction north)
-    mo_cut->move_forward_backward( ).
+    mo_cut->move( ).
 
     cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 1 y = -1 )
                                         act = mo_cut->get_position( ) ).
@@ -99,9 +79,58 @@ CLASS ltcl_mars_rover IMPLEMENTATION.
     mo_cut->set_direction( ycl_mars_rover=>mc_direction-south ).
 
     " Move Mars rover forward (direction north)
-    mo_cut->move_forward_backward( ).
+    mo_cut->move( ).
 
     cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 4 y = 4 )
                                         act = mo_cut->get_position( ) ).
   ENDMETHOD.
+
+  METHOD test_move_left.
+    " Set the starting position
+    mo_cut->set_starting_position( VALUE ycl_mars_rover=>ts_position( x = 1 y = 2 ) ).
+    mo_cut->set_direction( ycl_mars_rover=>mc_direction-west ).
+
+    " Move Mars rover left (direction west)
+    mo_cut->move( ).
+
+    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 1 y = 1 )
+                                        act = mo_cut->get_position( ) ).
+  ENDMETHOD.
+
+  METHOD test_move_right.
+    " Set the starting position
+    mo_cut->set_starting_position( VALUE ycl_mars_rover=>ts_position( x = 1 y = 2 ) ).
+    mo_cut->set_direction( ycl_mars_rover=>mc_direction-east ).
+
+    " Move Mars rover right (direction east)
+    mo_cut->move( ).
+
+    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 1 y = 3 )
+                                        act = mo_cut->get_position( ) ).
+  ENDMETHOD.
+
+  METHOD test_move_left_bound_reach.
+    " Set the starting position
+    mo_cut->set_starting_position( VALUE ycl_mars_rover=>ts_position( x = 1 y = 1 ) ).
+    mo_cut->set_direction( ycl_mars_rover=>mc_direction-west ).
+
+    " Move Mars rover left (direction west)
+    mo_cut->move( ).
+
+    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 1 y = 4 )
+                                        act = mo_cut->get_position( ) ).
+  ENDMETHOD.
+
+  METHOD test_move_right_bound_reach.
+    " Set the starting position
+    mo_cut->set_starting_position( VALUE ycl_mars_rover=>ts_position( x = 1 y = 4 ) ).
+    mo_cut->set_direction( ycl_mars_rover=>mc_direction-east ).
+
+    " Move Mars rover left (direction west)
+    mo_cut->move( ).
+
+    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mars_rover=>ts_position( x = 1 y = 1 )
+                                        act = mo_cut->get_position( ) ).
+  ENDMETHOD.
+
 ENDCLASS.

@@ -21,11 +21,9 @@ CLASS ycl_mars_rover DEFINITION
     METHODS set_direction           IMPORTING iv_direction TYPE ty_direction.
     METHODS set_commands            IMPORTING it_commands TYPE ycl_mars_rover=>tt_commands.
 
-    METHODS get_position            RETURNING VALUE(rs_position) TYPE ycl_mars_rover=>ts_position.
-    METHODS get_direction           RETURNING VALUE(rv_direction) TYPE ty_direction.
-    METHODS get_commands            RETURNING VALUE(rt_commands) TYPE ycl_mars_rover=>tt_commands.
 
-    METHODS move_forward_backward.
+    METHODS move.
+    METHODS get_position RETURNING VALUE(rs_position) TYPE ts_position.
 
   PRIVATE SECTION.
     DATA ms_position    TYPE ts_position.
@@ -34,6 +32,8 @@ CLASS ycl_mars_rover DEFINITION
 
     METHODS move_forward  RETURNING VALUE(rv_position) TYPE i.
     METHODS move_backward RETURNING VALUE(rv_position) TYPE i.
+    METHODS move_left     RETURNING VALUE(rv_position) TYPE i.
+    METHODS move_right    RETURNING VALUE(rv_position) TYPE i.
 
 ENDCLASS.
 
@@ -51,34 +51,45 @@ CLASS ycl_mars_rover IMPLEMENTATION.
     mt_commands = it_commands.
   ENDMETHOD.
 
-  METHOD get_position.
-    rs_position = ms_position.
-  ENDMETHOD.
-
-  METHOD get_direction.
-    rv_direction = mv_direction.
-  ENDMETHOD.
-
-  METHOD get_commands.
-    rt_commands = mt_commands.
-  ENDMETHOD.
-
-  METHOD move_forward_backward.
-    ms_position-x = SWITCH #( mv_direction
-                              WHEN mc_direction-north THEN move_forward( )
-                              WHEN mc_direction-south THEN move_backward( ) ).
-  ENDMETHOD.
-
   METHOD move_backward.
-    rv_position = SWITCH #( ms_position-x
-                            WHEN 1 THEN 4               " Grid 4x4 -> If 1 reached, go forward to 4
-                            ELSE ms_position-x - 1 ).
+    ms_position-x = SWITCH #( ms_position-x
+                              WHEN 1 THEN 4               " Grid 4x4 -> If 1 reached, go to upper boundary 4
+                              ELSE ms_position-x - 1 ).
   ENDMETHOD.
 
   METHOD move_forward.
-    rv_position = SWITCH #( ms_position-x
-                            WHEN 4 THEN 1               " Grid 4x4 -> If 4 reached, go back to 1
-                            ELSE ms_position-x + 1 ).
+    ms_position-x = SWITCH #( ms_position-x
+                              WHEN 4 THEN 1               " Grid 4x4 -> If 4 reached, go to lower boundary 1
+                              ELSE ms_position-x + 1 ).
+  ENDMETHOD.
+
+  METHOD move_left.
+    ms_position-y = SWITCH #( ms_position-y
+                              WHEN 1 THEN 4               " Grid 4x4 -> If 1 reached, go to right boundary 4
+                              ELSE ms_position-y - 1 ).
+  ENDMETHOD.
+
+  METHOD move_right.
+    ms_position-y = SWITCH #( ms_position-y
+                              WHEN 4 THEN 1
+                              ELSE ms_position-y + 1 ).
+  ENDMETHOD.
+
+  METHOD move.
+    CASE mv_direction.
+      WHEN mc_direction-north.
+        move_forward( ).
+      WHEN mc_direction-south.
+        move_backward( ).
+      WHEN mc_direction-west.
+        move_left( ).
+      WHEN mc_direction-east.
+        move_right( ).
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD get_position.
+    rs_position = ms_position.
   ENDMETHOD.
 
 ENDCLASS.
