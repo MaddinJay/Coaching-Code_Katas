@@ -3,94 +3,71 @@ CLASS ycl_mars_rover DEFINITION
   CREATE PUBLIC .
 
   PUBLIC SECTION.
-    ##TODO " Migrate types in interface
-    TYPES: ty_position TYPE int1,
-           BEGIN OF ts_position,
-             x TYPE ty_position,
-             y TYPE ty_position,
-           END OF ts_position,
-           tt_position TYPE STANDARD TABLE OF ts_position WITH DEFAULT KEY,
+    METHODS set_starting_position   IMPORTING is_position TYPE yif_mr_types=>ts_position.
 
-           BEGIN OF ENUM ty_direction STRUCTURE mc_direction BASE TYPE char1,
-             no_direction VALUE IS INITIAL,
-             north        VALUE 'N',
-             south        VALUE 'S',
-             west         VALUE 'W',
-             east         VALUE 'E',
-           END OF ENUM ty_direction STRUCTURE mc_direction,
-           tt_commands TYPE STANDARD TABLE OF ty_direction WITH DEFAULT KEY.
-
-    METHODS set_starting_position   IMPORTING is_position TYPE ycl_mars_rover=>ts_position.
-
-
-    METHODS move IMPORTING it_commands TYPE tt_commands.
+    METHODS move IMPORTING it_commands TYPE yif_mr_types=>tt_commands.
 
     METHODS constructor.
-    METHODS get_position
-      RETURNING
-        VALUE(rs_position) TYPE ycl_mars_rover=>ts_position.
+    METHODS get_position RETURNING VALUE(rs_position) TYPE yif_mr_types=>ts_position.
+    METHODS get_message  RETURNING VALUE(rv_message) TYPE string.
 
   PRIVATE SECTION.
+    DATA ms_actual_position TYPE yif_mr_types=>ts_position.
+    DATA mo_sequence        TYPE REF TO ycl_mr_position_sequence.
+    DATA mo_scanner         TYPE REF TO ycl_mr_detector.
+    DATA mo_message         TYPE REF TO ycl_mr_messanger.
 
-    DATA ms_actual_position    TYPE ts_position.
-    DATA mv_direction   TYPE ty_direction.
-    DATA mo_sequence TYPE REF TO ycl_mr_postion_sequence.
+    METHODS calculate_sequence              IMPORTING it_commands TYPE yif_mr_types=>tt_commands.
 
-    METHODS calculate_sequence_positions IMPORTING it_commands TYPE ycl_mars_rover=>tt_commands.
-
-    METHODS report_obstacle_found.
-    METHODS go_ahead.
-    METHODS get_next_position RETURNING VALUE(r_result) TYPE ycl_mars_rover=>ts_position.
-    METHODS is_end_reached IMPORTING is_next_position         TYPE ycl_mars_rover=>ts_position
-                           RETURNING VALUE(rv_is_not_reached) TYPE abap_bool.
-    METHODS do_step            IMPORTING is_next_position TYPE ycl_mars_rover=>ts_position.
+    METHODS execute_sequence.
+    METHODS get_next_position               RETURNING VALUE(r_result)          TYPE yif_mr_types=>ts_position.
+    METHODS is_end_reached                  IMPORTING is_next_position         TYPE yif_mr_types=>ts_position
+                                            RETURNING VALUE(rv_is_not_reached) TYPE abap_bool.
+    METHODS do_step                         IMPORTING is_next_position         TYPE yif_mr_types=>ts_position.
+    METHODS is_obstacle_found               IMPORTING is_position        TYPE yif_mr_types=>ts_position
+                                            RETURNING VALUE(rv_is_found) TYPE abap_bool.
+    METHODS report_obstacle                 IMPORTING is_position              TYPE yif_mr_types=>ts_position.
+    METHODS report_no_obstacle_found.
 
 ENDCLASS.
 
 CLASS ycl_mars_rover IMPLEMENTATION.
 
-  METHOD constructor.
-    mo_sequence = NEW #( ).
-  ENDMETHOD.
-
-  METHOD move.
-    calculate_sequence_positions( it_commands ).
-    go_ahead( ).
-*    set_position_back_to_start( ).
-*    DATA(lv_found) = scan_next_square( ).
-*    IF lv_found = abap_true.
-*      report_obstacle_found( ).
-*    ELSE.
-*      go_ahead( ).
-*    ENDIF.
-  ENDMETHOD.
-
-  METHOD calculate_sequence_positions.
+  METHOD calculate_sequence.
     mo_sequence->calculate_sequence( it_commands          = it_commands
                                      is_starting_position = ms_actual_position ).
   ENDMETHOD.
 
-  METHOD set_starting_position.
-    ms_actual_position = is_position.
-  ENDMETHOD.
-
-  METHOD report_obstacle_found.
-
-  ENDMETHOD.
-
-  METHOD go_ahead.
-    DO.
-      DATA(ls_next_position) = get_next_position( ).
-      IF is_end_reached( ls_next_position ).
-        EXIT.
-      ENDIF.
-      ##TODO " Obstacle Scan integration
-      do_step( ls_next_position ).
-    ENDDO.
+  METHOD constructor.
+    mo_sequence = NEW #( ).
+    mo_scanner  = NEW #( ). ##TODO " Break dependency for testing by DIP
+    mo_message  = NEW #( ). ##TODO " Break dependency for testing by DIP
   ENDMETHOD.
 
   METHOD do_step.
     ms_actual_position = is_next_position.
+  ENDMETHOD.
+
+  METHOD execute_sequence.
+    DO.
+      DATA(ls_next_position) = get_next_position( ).
+
+      IF is_end_reached( ls_next_position ).
+        report_no_obstacle_found( ).
+        EXIT.   " Stop in final position of sequence
+      ENDIF.
+
+      IF is_obstacle_found( ls_next_position ).
+        report_obstacle( ls_next_position ).
+        EXIT.   " Stop in actual position
+      ELSE.
+        do_step( ls_next_position ).
+      ENDIF.
+    ENDDO.
+  ENDMETHOD.
+
+  METHOD get_message.
+    rv_message = mo_message->get_message( ).
   ENDMETHOD.
 
   METHOD get_next_position .
@@ -101,9 +78,29 @@ CLASS ycl_mars_rover IMPLEMENTATION.
     rs_position = ms_actual_position.
   ENDMETHOD.
 
-
   METHOD is_end_reached.
     rv_is_not_reached = xsdbool( is_next_position = ms_actual_position ).
+  ENDMETHOD.
+
+  METHOD is_obstacle_found.
+    rv_is_found = mo_scanner->scan( is_position ).
+  ENDMETHOD.
+
+  METHOD move.
+    calculate_sequence( it_commands ).
+    execute_sequence( ).
+  ENDMETHOD.
+
+  METHOD report_no_obstacle_found.
+    mo_message->set_msg_no_obstacle_found( ).
+  ENDMETHOD.
+
+  METHOD report_obstacle.
+    mo_message->set_msg_obstacle_found( is_position ).
+  ENDMETHOD.
+
+  METHOD set_starting_position.
+    ms_actual_position = is_position.
   ENDMETHOD.
 
 ENDCLASS.
