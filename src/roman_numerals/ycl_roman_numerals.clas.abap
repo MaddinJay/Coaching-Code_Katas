@@ -17,7 +17,7 @@ ENDCLASS.
 CLASS ycl_roman_numerals IMPLEMENTATION.
 
   METHOD convert.
-    rv_romanic = 'I'.
+    rv_romanic = COND #( WHEN iv_number = 1 THEN 'I' ).
   ENDMETHOD.
 
 ENDCLASS.
