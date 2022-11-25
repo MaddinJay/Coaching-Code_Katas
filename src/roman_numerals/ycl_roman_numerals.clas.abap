@@ -17,7 +17,13 @@ ENDCLASS.
 CLASS ycl_roman_numerals IMPLEMENTATION.
 
   METHOD convert.
-    rv_romanic = COND #( WHEN iv_number = 1 THEN 'I' ).
+    IF iv_number < 1 OR iv_number > 3000.
+      rv_romanic = 'Conversion failed'.
+      EXIT.
+    ENDIF.
+
+    rv_romanic = COND #( WHEN iv_number = 1 THEN 'I'
+                         WHEN iv_number = 3000 THEN 'MMM' ).
   ENDMETHOD.
 
 ENDCLASS.
