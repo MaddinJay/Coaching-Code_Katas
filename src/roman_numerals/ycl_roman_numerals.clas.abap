@@ -17,7 +17,7 @@ ENDCLASS.
 CLASS ycl_roman_numerals IMPLEMENTATION.
 
   METHOD convert.
-
+    rv_romanic = 'I'.
   ENDMETHOD.
 
 ENDCLASS.
