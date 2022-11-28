@@ -19,15 +19,15 @@ CLASS ltcl_even_odd IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_for_1_is_odd.
-    cl_abap_unit_assert=>assert_equals( exp = 'ODD'  act = mo_cut->determine( 1 ) ).
+    cl_abap_unit_assert=>assert_equals( exp = ycl_even_odd_determination=>odd  act = mo_cut->determine( 1 ) ).
   ENDMETHOD.
 
   METHOD test_for_2_is_even.
-    cl_abap_unit_assert=>assert_equals( exp = 'EVEN' act = mo_cut->determine( 2 ) ).
+    cl_abap_unit_assert=>assert_equals( exp = ycl_even_odd_determination=>even act = mo_cut->determine( 2 ) ).
   ENDMETHOD.
 
   METHOD test_for_4346_is_even.
-    cl_abap_unit_assert=>assert_equals( exp = 'EVEN' act = mo_cut->determine( 4346 ) ).
+    cl_abap_unit_assert=>assert_equals( exp = ycl_even_odd_determination=>even act = mo_cut->determine( 4346 ) ).
   ENDMETHOD.
 
 ENDCLASS.
