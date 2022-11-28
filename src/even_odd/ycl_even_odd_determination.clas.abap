@@ -24,15 +24,8 @@ ENDCLASS.
 CLASS ycl_even_odd_determination IMPLEMENTATION.
 
   METHOD determine.
-    IF is_even( iv_number ).
-      rv_state = 'EVEN'.
-      RETURN.
-    ENDIF.
-
-    IF is_odd( iv_number ) = abap_true.
-      rv_state = 'ODD'.
-    ENDIF.
-
+    rv_state = COND #( WHEN is_even( iv_number ) THEN 'EVEN'
+                       WHEN is_odd( iv_number ) THEN 'ODD' ).
   ENDMETHOD.
 
   METHOD is_odd.
