@@ -14,7 +14,11 @@ ENDCLASS.
 CLASS ycl_even_odd_determination IMPLEMENTATION.
 
   METHOD determine.
-    rv_state = 'ODD'.
+    IF iv_number = 1.
+      rv_state = 'ODD'.
+    ELSEIF iv_number = 2.
+      rv_state = 'EVEN'.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.

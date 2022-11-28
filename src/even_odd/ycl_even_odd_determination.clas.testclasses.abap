@@ -8,7 +8,8 @@ CLASS ltcl_even_odd DEFINITION FINAL FOR TESTING
     METHODS:
       setup,
       test_for_1_is_odd FOR TESTING,
-      test_for_2_is_even FOR TESTING.
+      test_for_2_is_even FOR TESTING,
+      test_for_4346_is_even FOR TESTING.
 ENDCLASS.
 
 CLASS ltcl_even_odd IMPLEMENTATION.
@@ -23,6 +24,10 @@ CLASS ltcl_even_odd IMPLEMENTATION.
 
   METHOD test_for_2_is_even.
     cl_abap_unit_assert=>assert_equals( exp = 'EVEN' act = mo_cut->determine( 2 ) ).
+  ENDMETHOD.
+
+  METHOD test_for_4346_is_even.
+    cl_abap_unit_assert=>assert_equals( exp = 'EVEN' act = mo_cut->determine( 4346 ) ).
   ENDMETHOD.
 
 ENDCLASS.
