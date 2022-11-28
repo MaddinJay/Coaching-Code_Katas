@@ -3,6 +3,12 @@ CLASS ycl_even_odd_determination DEFINITION
   CREATE PUBLIC .
 
   PUBLIC SECTION.
+    "! Determines the state of a number, EVEN or ODD
+    "! For even numbers we get result EVEN
+    "! For odd numbers we get result ODD
+    "! Range number is INT4: -2,147,483,648 to +2,147,483,647
+    "! @parameter iv_number | Number
+    "! @parameter rv_state | State of number (EVEN/ODD)
     METHODS determine IMPORTING iv_number       TYPE int4
                       RETURNING VALUE(rv_state) TYPE char4.
 
