@@ -14,10 +14,12 @@ ENDCLASS.
 CLASS ycl_even_odd_determination IMPLEMENTATION.
 
   METHOD determine.
-    IF iv_number = 1.
-      rv_state = 'ODD'.
-    ELSEIF xsdbool( iv_number MOD 2 = 0 ) = abap_true.
+    IF xsdbool( iv_number MOD 2 = 0 ) = abap_true.
       rv_state = 'EVEN'.
+      RETURN.
+    ENDIF.
+    IF xsdbool( iv_number MOD 1 = 0 ) = abap_true.
+      rv_state = 'ODD'.
     ENDIF.
   ENDMETHOD.
 
