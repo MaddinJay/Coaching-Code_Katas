@@ -8,11 +8,8 @@ CLASS ycl_even_odd_determination DEFINITION
         iv_number       TYPE int4
       RETURNING
         VALUE(rv_state) TYPE char4.
-  PROTECTED SECTION.
   PRIVATE SECTION.
 ENDCLASS.
-
-
 
 CLASS ycl_even_odd_determination IMPLEMENTATION.
 
