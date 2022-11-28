@@ -1,14 +1,23 @@
-class YCL_EVEN_ODD_DETERMINATION definition
-  public
-  final
-  create public .
+CLASS ycl_even_odd_determination DEFINITION
+  PUBLIC
+  CREATE PUBLIC .
 
-public section.
-protected section.
-private section.
+  PUBLIC SECTION.
+    METHODS determine
+      IMPORTING
+        iv_number       TYPE int4
+      RETURNING
+        VALUE(rv_state) TYPE char4.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
 ENDCLASS.
 
 
 
-CLASS YCL_EVEN_ODD_DETERMINATION IMPLEMENTATION.
+CLASS ycl_even_odd_determination IMPLEMENTATION.
+
+  METHOD determine.
+    rv_state = 'ODD'.
+  ENDMETHOD.
+
 ENDCLASS.
