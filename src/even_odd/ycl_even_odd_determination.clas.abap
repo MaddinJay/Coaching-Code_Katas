@@ -21,7 +21,7 @@ CLASS ycl_even_odd_determination DEFINITION
     METHODS is_even IMPORTING iv_number         TYPE int4
                     RETURNING VALUE(rv_is_even) TYPE abap_bool.
     METHODS is_odd  IMPORTING iv_number        TYPE int4
-                    RETURNING VALUE(rv_is_odd) TYPE xsdboolean.
+                    RETURNING VALUE(rv_is_odd) TYPE abap_bool.
 ENDCLASS.
 
 CLASS ycl_even_odd_determination IMPLEMENTATION.
