@@ -19,7 +19,7 @@ CLASS ltcl_even_odd IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test_for_1_is_odd.
-    cl_abap_unit_assert=>assert_equals( exp = 'ODD' act = mo_cut->determine( 1 ) ).
+    cl_abap_unit_assert=>assert_equals( exp = 'ODD'  act = mo_cut->determine( 1 ) ).
   ENDMETHOD.
 
   METHOD test_for_2_is_even.
