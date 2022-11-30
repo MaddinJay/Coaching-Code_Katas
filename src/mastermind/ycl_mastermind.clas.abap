@@ -10,6 +10,7 @@ CLASS ycl_mastermind DEFINITION
              correct      TYPE int1,
              wrong_placed TYPE int1,
            END OF ts_counting.
+    METHODS constructor IMPORTING is_row_to_guess TYPE ts_row.
     METHODS evaluate
       IMPORTING
         is_row          TYPE ts_row
@@ -17,11 +18,17 @@ CLASS ycl_mastermind DEFINITION
         VALUE(r_result) TYPE ts_counting.
   PROTECTED SECTION.
   PRIVATE SECTION.
+    DATA ms_row TYPE ts_row.
 ENDCLASS.
 
 
 
 CLASS YCL_MASTERMIND IMPLEMENTATION.
+
+
+  METHOD constructor.
+    ms_row = is_row_to_guess.
+  ENDMETHOD.
 
 
   METHOD evaluate.
