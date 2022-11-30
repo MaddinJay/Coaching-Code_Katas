@@ -28,6 +28,8 @@ CLASS ycl_mastermind IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD evaluate.
-    r_result = VALUE #( correct = 1 ).
+    DO 5 TIMES.
+      r_result = VALUE #( correct = 1 ).
+    ENDDO.
   ENDMETHOD.
 ENDCLASS.
