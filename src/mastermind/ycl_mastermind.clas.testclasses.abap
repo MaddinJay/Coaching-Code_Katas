@@ -12,7 +12,6 @@ CLASS ltcl_mastermind IMPLEMENTATION.
 
   METHOD first_test.
 
-
     DATA mo_cut TYPE REF TO ycl_mastermind.
     mo_cut = NEW #( ).
     cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_mastermind=>ts_counting( correct = 1 wrong_placed = 0 )
