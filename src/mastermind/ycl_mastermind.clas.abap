@@ -21,17 +21,13 @@ CLASS ycl_mastermind DEFINITION
     DATA ms_row TYPE ts_row.
 ENDCLASS.
 
-
-
-CLASS YCL_MASTERMIND IMPLEMENTATION.
-
+CLASS ycl_mastermind IMPLEMENTATION.
 
   METHOD constructor.
     ms_row = is_row_to_guess.
   ENDMETHOD.
 
-
   METHOD evaluate.
-
+    r_result = VALUE #( correct = 1 ).
   ENDMETHOD.
 ENDCLASS.
