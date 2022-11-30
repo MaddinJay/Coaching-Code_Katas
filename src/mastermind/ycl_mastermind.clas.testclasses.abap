@@ -4,13 +4,13 @@ CLASS ltcl_mastermind DEFINITION FINAL FOR TESTING
 
   PRIVATE SECTION.
     METHODS:
-      first_test FOR TESTING RAISING cx_static_check.
+      acceptance_test_all_correct FOR TESTING.
 ENDCLASS.
 
 
 CLASS ltcl_mastermind IMPLEMENTATION.
 
-  METHOD first_test.
+  METHOD acceptance_test_all_correct.
 
     DATA mo_cut TYPE REF TO ycl_mastermind.
     mo_cut = NEW #( ).
