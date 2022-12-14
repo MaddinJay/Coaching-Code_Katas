@@ -7,6 +7,7 @@ CLASS ycl_fizzbuzz_extended DEFINITION
                     RETURNING VALUE(rv_result) TYPE string.
   PRIVATE SECTION.
     CONSTANTS mc_fizz TYPE string VALUE 'Fizz' ##NO_TEXT.
+
     METHODS is_divisible_by_3 IMPORTING iv_number       TYPE int4
                               RETURNING VALUE(r_result) TYPE abap_bool.
 
