@@ -11,6 +11,8 @@ CLASS ltcl_fizzbuzz_extended DEFINITION FINAL FOR TESTING
       acceptance_test_div_by_3 FOR TESTING,
       acceptance_test_div_by_5 FOR TESTING,
       acceptance_test_div_by_15 FOR TESTING.
+
+    ##TODO " Boundaries testen (Right B.C.E.P. and Zombies)
 ENDCLASS.
 
 
