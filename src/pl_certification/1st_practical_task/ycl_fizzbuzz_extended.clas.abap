@@ -26,6 +26,11 @@ CLASS ycl_fizzbuzz_extended IMPLEMENTATION.
     IF is_divisible_by_5( iv_number ) = abap_true.
       rv_result = mc_buzz.
     ENDIF.
+
+    IF is_divisible_by_3( iv_number ) AND
+       is_divisible_by_5( iv_number ).
+      rv_result = 'FizzBuzz'.
+    ENDIF.
   ENDMETHOD.
 
   METHOD is_divisible_by_5.
