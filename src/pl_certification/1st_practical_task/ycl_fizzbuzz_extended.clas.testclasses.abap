@@ -13,6 +13,7 @@ CLASS ltcl_fizzbuzz_extended DEFINITION FINAL FOR TESTING
       acceptance_test_div_by_15 FOR TESTING.
 
     ##TODO " Boundaries testen (Right B.C.E.P. and Zombies)
+    ##TODO " Anwendung IODA / Software Cell
 ENDCLASS.
 
 
