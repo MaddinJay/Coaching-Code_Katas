@@ -58,10 +58,10 @@ CLASS ycl_kk_coin_change IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD change_with_coin.
-    IF mo_amount->get_value( ) >= iv_coin.
+    IF mo_amount->is_value_disible_by_coin( iv_coin ).
       APPEND VALUE yif_kk_data_pool=>ts_coin( coin = iv_coin ) TO mt_coins. " Store coin for output
-      mo_amount->set_value( mo_amount->get_value( ) - iv_coin ). " Reduce amount by coin value
-      rv_is_changeable_by_coin = abap_true.               " Mark to repeat change with this coin
+      mo_amount->set_rest_value_after_change( iv_coin ).                    " Reduce amount by coin value
+      rv_is_changeable_by_coin = abap_true.                                 " Mark to repeat change with this coin
     ENDIF.
   ENDMETHOD.
 
