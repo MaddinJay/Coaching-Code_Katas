@@ -18,6 +18,9 @@ CLASS ycl_kk_coin_change DEFINITION
                                     RETURNING VALUE(rv_is_changeable_by_coin) TYPE abap_bool.
     METHODS build_list_of_coins     RETURNING VALUE(rt_coins) TYPE int4_table.
     METHODS change_with_actual_coin IMPORTING iv_coin TYPE any.
+    METHODS add_coin_to_change_list IMPORTING iv_coin TYPE int4.
+    METHODS set_rest_value_after_change IMPORTING iv_coin TYPE int4.
+    METHODS mark_as_changeable          RETURNING VALUE(rv_is_changeable_by_coin) TYPE abap_bool.
 ENDCLASS.
 
 
@@ -59,10 +62,22 @@ CLASS ycl_kk_coin_change IMPLEMENTATION.
 
   METHOD change_with_coin.
     IF mo_amount->is_value_disible_by_coin( iv_coin ).
-      APPEND VALUE yif_kk_data_pool=>ts_coin( coin = iv_coin ) TO mt_coins. " Store coin for output
-      mo_amount->set_rest_value_after_change( iv_coin ).                    " Reduce amount by coin value
-      rv_is_changeable_by_coin = abap_true.                                 " Mark to repeat change with this coin
+      add_coin_to_change_list( iv_coin ).
+      set_rest_value_after_change( iv_coin ).
+      rv_is_changeable_by_coin = mark_as_changeable( ).
     ENDIF.
+  ENDMETHOD.
+
+  METHOD mark_as_changeable.
+    rv_is_changeable_by_coin = abap_true.
+  ENDMETHOD.
+
+  METHOD set_rest_value_after_change.
+    mo_amount->set_rest_value_after_change( iv_coin ).
+  ENDMETHOD.
+
+  METHOD add_coin_to_change_list.
+    APPEND VALUE yif_kk_data_pool=>ts_coin( coin = iv_coin ) TO mt_coins.
   ENDMETHOD.
 
 ENDCLASS.
