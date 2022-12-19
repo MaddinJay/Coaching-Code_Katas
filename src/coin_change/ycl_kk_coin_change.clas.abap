@@ -26,6 +26,7 @@ CLASS ycl_kk_coin_change DEFINITION
   PRIVATE SECTION.
     DATA mt_coins   TYPE tt_coins.
     DATA mv_amount  TYPE ycl_kk_coin_change=>ty_coin.
+    DATA mo_amount TYPE REF TO ycl_kk_amount.
 
     METHODS change_with_coin        IMPORTING iv_coin                         TYPE int4
                                     RETURNING VALUE(rv_is_changeable_by_coin) TYPE abap_bool.
@@ -37,7 +38,6 @@ ENDCLASS.
 CLASS ycl_kk_coin_change IMPLEMENTATION.
 
   METHOD change.
-    DATA mo_amount TYPE REF TO ycl_kk_amount.
     mo_amount = NEW #( ).
     mo_amount->set_value( iv_amount ).
 
@@ -70,9 +70,9 @@ CLASS ycl_kk_coin_change IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD change_with_coin.
-    IF mv_amount >= iv_coin.
+    IF mo_amount->get_value( ) >= iv_coin.
       APPEND VALUE ts_coin( coin = iv_coin ) TO mt_coins. " Store coin for output
-      mv_amount                = mv_amount - iv_coin.     " Reduce amount by coin value
+      mo_amount->set_value( mo_amount->get_value( ) - iv_coin ). " Reduce amount by coin value
       rv_is_changeable_by_coin = abap_true.               " Mark to repeat change with this coin
     ENDIF.
   ENDMETHOD.
