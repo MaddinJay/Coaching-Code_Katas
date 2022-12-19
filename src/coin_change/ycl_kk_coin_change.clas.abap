@@ -3,29 +3,15 @@ CLASS ycl_kk_coin_change DEFINITION
   CREATE PUBLIC .
 
   PUBLIC SECTION.
-    TYPES: ty_coin TYPE int4,
-           BEGIN OF ts_coin,
-             coin TYPE ty_coin,
-           END OF ts_coin,
-           tt_coins TYPE STANDARD TABLE OF ts_coin WITH DEFAULT KEY.
-    TYPES: BEGIN OF ENUM coins STRUCTURE mc_coins BASE TYPE ty_coin,
-             zero_rappen   VALUE IS INITIAL, " Have to be defined once
-             five_rappen   VALUE 5,
-             ten_rappen    VALUE 10,
-             twenty_rappen VALUE 20,
-             fifty_rappen  VALUE 50,
-             one_franc     VALUE 100,
-             two_francs    VALUE 200,
-             five_francs   VALUE 500,
-           END OF ENUM coins STRUCTURE mc_coins.
-    CONSTANTS: mc_minimal_coin TYPE ty_coin VALUE 5.
 
-    METHODS change IMPORTING iv_amount       TYPE ty_coin
-                   RETURNING VALUE(rt_coins) TYPE ycl_kk_coin_change=>tt_coins.
+    METHODS constructor.
+
+    METHODS change IMPORTING iv_amount       TYPE yif_kk_data_pool=>ty_amount
+                   RETURNING VALUE(rt_coins) TYPE yif_kk_data_pool=>tt_coins.
+
 
   PRIVATE SECTION.
-    DATA mt_coins   TYPE tt_coins.
-    DATA mv_amount  TYPE ycl_kk_coin_change=>ty_coin.
+    DATA mt_coins   TYPE yif_kk_data_pool=>tt_coins.
     DATA mo_amount TYPE REF TO ycl_kk_amount.
 
     METHODS change_with_coin        IMPORTING iv_coin                         TYPE int4
@@ -37,11 +23,13 @@ ENDCLASS.
 
 CLASS ycl_kk_coin_change IMPLEMENTATION.
 
-  METHOD change.
+  METHOD constructor.
     mo_amount = NEW #( ).
+  ENDMETHOD.
+
+  METHOD change.
     mo_amount->set_value( iv_amount ).
 
-    mv_amount = iv_amount.
     ##TODO " Generalisierung für unterschiedliche Währungen integrieren mit bsp.weise Command Pattern und Factory Pattern
     LOOP AT build_list_of_coins( ) INTO DATA(lv_coin).
       change_with_actual_coin( lv_coin ).
@@ -60,18 +48,18 @@ CLASS ycl_kk_coin_change IMPLEMENTATION.
 
   METHOD build_list_of_coins.
     ##TODO " Geht es auch ohne Konvertierung?
-    rt_coins  = VALUE int4_table( ( CONV #( mc_coins-five_francs ) )
-                                  ( CONV #( mc_coins-two_francs ) )
-                                  ( CONV #( mc_coins-one_franc ) )
-                                  ( CONV #( mc_coins-fifty_rappen ) )
-                                  ( CONV #( mc_coins-twenty_rappen ) )
-                                  ( CONV #( mc_coins-ten_rappen ) )
-                                  ( CONV #( mc_coins-five_rappen ) ) ).
+    rt_coins  = VALUE int4_table( ( CONV #( yif_kk_data_pool=>mc_coins-five_francs ) )
+                                  ( CONV #( yif_kk_data_pool=>mc_coins-two_francs ) )
+                                  ( CONV #( yif_kk_data_pool=>mc_coins-one_franc ) )
+                                  ( CONV #( yif_kk_data_pool=>mc_coins-fifty_rappen ) )
+                                  ( CONV #( yif_kk_data_pool=>mc_coins-twenty_rappen ) )
+                                  ( CONV #( yif_kk_data_pool=>mc_coins-ten_rappen ) )
+                                  ( CONV #( yif_kk_data_pool=>mc_coins-five_rappen ) ) ).
   ENDMETHOD.
 
   METHOD change_with_coin.
     IF mo_amount->get_value( ) >= iv_coin.
-      APPEND VALUE ts_coin( coin = iv_coin ) TO mt_coins. " Store coin for output
+      APPEND VALUE yif_kk_data_pool=>ts_coin( coin = iv_coin ) TO mt_coins. " Store coin for output
       mo_amount->set_value( mo_amount->get_value( ) - iv_coin ). " Reduce amount by coin value
       rv_is_changeable_by_coin = abap_true.               " Mark to repeat change with this coin
     ENDIF.

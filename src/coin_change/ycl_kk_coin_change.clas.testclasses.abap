@@ -26,7 +26,7 @@ CLASS ltcl_coin_change IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD change_989_rappen.
-    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_kk_coin_change=>tt_coins( ( coin = 500 )
+    cl_abap_unit_assert=>assert_equals( exp = VALUE yif_kk_data_pool=>tt_coins( ( coin = 500 )
                                                                                   ( coin = 200 )
                                                                                   ( coin = 200 )
                                                                                   ( coin = 50 )
@@ -37,7 +37,7 @@ CLASS ltcl_coin_change IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD change_999_rappen.
-    cl_abap_unit_assert=>assert_equals( exp = VALUE ycl_kk_coin_change=>tt_coins( ( coin = 500 )
+    cl_abap_unit_assert=>assert_equals( exp = VALUE yif_kk_data_pool=>tt_coins( ( coin = 500 )
                                                                                   ( coin = 200 )
                                                                                   ( coin = 200 )
                                                                                   ( coin = 50 )
