@@ -37,6 +37,10 @@ ENDCLASS.
 CLASS ycl_kk_coin_change IMPLEMENTATION.
 
   METHOD change.
+    DATA mo_amount TYPE REF TO ycl_kk_amount.
+    mo_amount = NEW #( ).
+    mo_amount->set_value( iv_amount ).
+
     mv_amount = iv_amount.
     ##TODO " Generalisierung für unterschiedliche Währungen integrieren mit bsp.weise Command Pattern und Factory Pattern
     LOOP AT build_list_of_coins( ) INTO DATA(lv_coin).
